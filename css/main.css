@@ -2,7 +2,7 @@ body {
     margin: auto; 
     background-image: url("http://acepokersolutions.com/poker-software/bovada-mods/APS-t1.jpg");
     background-repeat: no-repeat;
-     background-size: 100%; 
+    background-size: 100%; 
 }
 
 h1 {
@@ -77,7 +77,7 @@ h1 {
     height: 200px;
     width: 100px;
     background: url("https://hearthstone.gamepedia.com/media/hearthstone.gamepedia.com/thumb/4/4c/Card_back-Pandaria.png/200px-Card_back-Pandaria.png?version=cf42a3965b66286f6e615b77cebc5359");
-     background-size: 100%;  
+    background-size: 100%;  
     background-repeat: no-repeat; 
     font-size: 80px;
     position: absolute;
