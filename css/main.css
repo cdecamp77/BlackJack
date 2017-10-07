@@ -1,6 +1,12 @@
-.container {
-    max-width: 100%;
-    margin: 0 auto;
+
+@media screen and (max-width: 100%) {
+    #primary { width:67%; }
+    #secondary { width:30%; margin-left:3%;}  
+}
+/* Tabled Portrait */
+@media screen and (max-width: 100%) {
+    #primary { width:100%; }
+    #secondary { width:100%; margin:0; border:none; }
 }
 
 body {
@@ -22,6 +28,7 @@ h1 {
     right: 20%;
     bottom: 20%;
     padding: 15px;
+    margin: 0;
 }
 
 .deal {
@@ -54,6 +61,7 @@ h1 {
     left: 30%;
     color: yellow;
     font-size: 25px;
+    background-color: rgba(0,0,0,.5);
 }
 
 .player {
@@ -63,7 +71,7 @@ h1 {
     right: 25%;
     font-size: 25px;
     box-sizing: content-box;
-    background: plum;
+    background: rgba(0,0,0,.5);
 }
 
 .dealerCards {
@@ -88,4 +96,26 @@ h1 {
     position: absolute;
     bottom: 25%;   
     right: 35%; 
+}
+
+.pTotal {
+    width: 100px;
+    font-size: 25px;
+    color: green;
+    background-color: black;
+    box-sizing: content-box;   
+    position: absolute;
+    right: 45%;
+    bottom: 30%; 
+}
+
+.dTotal {
+    width: 100px;
+    font-size: 25px;
+    box-sizing: content-box;
+    color: green;
+    background-color: black;
+    position: absolute;
+    left: 45%;
+    top: 30%;
 }
