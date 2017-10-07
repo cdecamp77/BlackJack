@@ -1,113 +1,73 @@
-var playerTotal = Card.value;
-var dealerTotal = Card.value;
+/*----- constants -----*/
 var playerHand = [];
 var dealerHand = [];
 var bank = "$" + 1000;
 var wager = "$" + 100;
-
-
-
-
-/*----- constants -----*/
-var deckNames = [
-  "sA", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "sJ", "sQ", "sK",
-  "hA", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "hJ", "hQ", "hK",
-  "cA", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "cJ", "cQ", "cK",
-  "dA", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "dJ", "dQ", "dK",
-];
-
-
-function Card(value, name, suit){
-    this.value = value;
-    this.name = name; 
-    this.suit = suit;
-}
-// Allows to print nice card name
-Card.prototype.toString = function() {
-    if(this.value==11 && this.suit == "Spades")
-        return "Ace of spades";
-    else
-        return this.suit+" "+this.name;
-}
-
-
-function Deck() {
-     this.cards = [];
-}
-
-Deck.prototype.createAllCards = function() {
-     for (var s = 0; s < Deck.suits.length; s++) {
-         for (var n = 0; n < Deck.names.length; n++) {
-            this.cards.push(new Card(Deck.values[n], Deck.names[n], Deck.suits[s]));
-         }
-     }
-}
-// These are so called static properties on OOP
-// We can just assign those values to Deck() function
-// Because they never ever change
-Deck.names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-Deck.values = [2,   3,   4,   5,   6,   7,   8,   9,   10,   10,  10,  10,  11];
-Deck.suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs']; 
-
-
-// Initialise
-
+var winner = null;
 var deck = new Deck();
-deck.createAllCards();
-console.log(deck.cards);
-
-
+var dealerTotal = computeHand(dealerHand);
+var playerTotal = computeHand(playerHand);
 
 
 /*----- app's state (variables) -----*/
+function Card(value, name, suit) {
+  this.value = value;
+  this.name = name;
+  this.suit = suit;
+}
 
+function Deck() {
+  this.cards = [];
+}
 
+Deck.prototype.createAllCards = function () {
+  for (var s = 0; s < Deck.suits.length; s++) {
+    for (var n = 0; n < Deck.names.length; n++) {
+      this.cards.push(new Card(Deck.values[n], Deck.names[n], Deck.suits[s]));
+    }
+  }
+}
 
-
-
+Deck.names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+Deck.values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11];
+Deck.suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
 
 /*----- cached element references -----*/
 // if player gets an ace
-function aceP(playerTotal) {
-  if (playerTotal + 11 === 21) {
-    //WIN if playerTotal > dealerTotal
-    //PUSH if playerTotal === dealerTotal
-    console.log("21");
-  } else if (playerTotal + 11 <= 20) {
-    playerTotal = playerTotal + 11;
-    // option to hit or stay 
-    console.log('ace becomes 11', playerTotal);
-  } else {
-    playerTotal = playerTotal + 1;
-    // option to hit or stay
-    console.log('ace is 1', playerTotal);
-  }
-}
+// function aceP(playerTotal) {
+//   if (playerTotal + 11 === 21) {
+//     //WIN if playerTotal > dealerTotal
+//     //PUSH if playerTotal === dealerTotal
+//     console.log("21");
+//   } else if (playerTotal + 11 <= 20) {
+//     playerTotal = playerTotal + 11;
+//     // option to hit or stay 
+//     console.log('ace becomes 11', playerTotal);
+//   } else {
+//     playerTotal = playerTotal + 1;
+//     // option to hit or stay
+//     console.log('ace is 1', playerTotal);
+//   }
+// }
 
 // if dealer gets an ace
-function aceD(dealerTotal) {
-  if (dealerTotal + 11 === 21 && dealerTotal + 11 >= 18) {
-    //Dealer stays
-    console.log(dealerTotal);
-  } else if (dealerTotal + 11 === 17) {
-    dealerTotal = dealerTotal + 11;
-    // dealer hits
-    console.log(dealerTotal);
-  } else if (dealerTotal + 11 <= 16) {
-    dealerTotal = dealerTotal + 11;
-    //dealer hits
-    console.log(dealerTotal);
-  } else {
-    dealerTotal = dealerTotal + 1;
-    console.log(dealerTotal);
-  }
-}
-
-
-
-
-
-
+// function aceD(dealerTotal) {
+//   if (dealerTotal + 11 === 21 && dealerTotal + 11 >= 18) {
+//     console.log("Dealer stays", dealerTotal);
+//   } else if (dealerTotal + 11 === 17) {
+//     dealerTotal = dealerTotal + 11;
+//     dealerHand(dealRandomCard());
+//     console.log("dealer hits, soft 17", dealerTotal);
+//   } else if (dealerTotal + 11 <= 16) {
+//     dealerTotal = dealerTotal + 11;
+//     dealerHand(dealRandomCard());
+//     console.log("dealer hits <=16", dealerTotal);
+//   } else {
+//     dealerTotal = dealerTotal + 1;
+//     dealerHand(dealRandomCard());
+//     console.log("dealer ace 1", dealerTotal);
+//   }
+// }
 
 /*----- event listeners -----*/
 $(function () {
@@ -118,22 +78,12 @@ $(function () {
   // dealerHand = deck.splice(Math.floor(Math.random() * deck.length), 1);
   // }
 
-  $('.deal').on('click', function (deal) {
-    if (playerHand.length == 0) {
+  $('.deal').on('click', function () {
 
-      playerHand.push(dealRandomCard());
-      playerHand.push(dealRandomCard());
-
-      dealerHand.push(dealRandomCard());
-      dealerHand.push(dealRandomCard());
-    };
-
-
-    console.log(playerHand);
-    console.log(dealerHand);
-
-
-
+    deal();
+    
+    console.log(computeHand(playerHand))
+    console.log(computeHand(dealerHand))
     // Store Bet amount in a VAR
     //dealer receives 1 card face up and 
     // one card face down.
@@ -142,7 +92,13 @@ $(function () {
 
   $('.hit').on('click', function () {
     playerHand.push(dealRandomCard());
-    console.log('hit', playerHand)
+    var playerTotal = computeHand(playerHand);
+    var dealerTotal = computeHand(dealerHand);
+    if (playerTotal > 21 && dealerTotal <= 21) {
+      console.log('Bust, player loses');
+    }
+    console.log(computeHand(playerHand))
+    console.log(computeHand(dealerHand))
     // adds one card to the players hand and
     // add the value to the 1st 2 cards
     // if total is <= 21 keep playing...
@@ -150,20 +106,23 @@ $(function () {
     // players Bank
   });
 
-  $('.stay').on('click', function (stay) {
-
-    if (dealerTotal === playerTotal) {
-      console.log('push')
-    } else if (dealerTotal < 17) {
+  $('.stay').on('click', function () {
+      computeHand(dealerHand);
+      if (dealerTotal === 21) {
+          console.log('dealer wins');
+      } else
+    if (dealerTotal < 17) {
       dealerHand.push(dealRandomCard());
-      console.log('dealer hit', dealerHand);
+      computeHand(dealerHand);
+      console.log('dealer hit', dealerTotal);
+   } else if (dealerTotal === playerTotal && dealerTotal >= 17) {
+      console.log('push')
+    } 
+     else if (dealerTotal > playerTotal) {
+      console.log('Dealer wins', dealerHand)
     } else {
       console.log('player wins');
     }
-
-
-
-
 
     // player has opted to stay with 
     // cards value.
@@ -177,17 +136,47 @@ $(function () {
     // If dealerHand < playerHand ....
     // Player wins, add Bet to Bank
   });
-
 });
 
-
-
-
-
 /*----- functions -----*/
-
 
 //deals random card from Deck
 function dealRandomCard() {
   return deck.cards.splice(Math.floor(Math.random() * deck.cards.length), 1)[0];
 }
+
+function deal() {
+    if (playerHand.length == 0) {
+      playerHand.push(dealRandomCard());
+      playerHand.push(dealRandomCard());
+      dealerHand.push(dealRandomCard());
+      dealerHand.push(dealRandomCard());
+    } else
+    if (dealerTotal == 21 && dealerTotal != 21) {
+        console.log('Dealer Wins');
+        deal();
+   }  else {
+        playerHand = [];
+        dealerHand = [];
+        deal();
+    }
+}
+
+
+function computeHand(hand) {
+  //return the best hand
+  var aceCount = 0;
+  var total = hand.reduce(function(acc, card) {
+    if (card.value === 11) aceCount++;
+    return acc + card.value;
+  }, 0);
+  while(total > 21 && aceCount) {
+      total -= 10;
+      aceCount--;
+  }
+  return total;
+}
+
+
+
+deck.createAllCards();
