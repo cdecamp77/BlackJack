@@ -81,7 +81,11 @@ $(function () {
   $('.deal').on('click', function () {
 
     deal();
-    
+    var playerTotal = computeHand(playerHand);
+    var dealerTotal = computeHand(dealerHand);
+    if (dealerTotal === 21 && playerTotal != 21) {
+        console.log('21, dealer wins', playerTotal)
+    }
     console.log(computeHand(playerHand))
     console.log(computeHand(dealerHand))
     // Store Bet amount in a VAR
@@ -94,8 +98,10 @@ $(function () {
     playerHand.push(dealRandomCard());
     var playerTotal = computeHand(playerHand);
     var dealerTotal = computeHand(dealerHand);
-    if (playerTotal > 21 && dealerTotal <= 21) {
+    if (playerTotal > 21 && dealerTotal < 22) {
       console.log('Bust, player loses');
+    } else if (playerTotal > 21) {
+        console.log('bust, player loses', playerTotal);
     }
     console.log(computeHand(playerHand))
     console.log(computeHand(dealerHand))
@@ -107,21 +113,23 @@ $(function () {
   });
 
   $('.stay').on('click', function () {
-      computeHand(dealerHand);
-      if (dealerTotal === 21) {
-          console.log('dealer wins');
-      } else
-    if (dealerTotal < 17) {
-      dealerHand.push(dealRandomCard());
-      computeHand(dealerHand);
-      console.log('dealer hit', dealerTotal);
-   } else if (dealerTotal === playerTotal && dealerTotal >= 17) {
+      playerTotal = computeHand(playerHand)
+      dealerTotal = computeHand(dealerHand);
+      while (dealerTotal <= 16) {
+          dealerHand.push(dealRandomCard());
+          dealerTotal = computeHand(dealerHand);  
+          if (dealerTotal > 21) {
+              console.log('dealer busts', dealerTotal);
+          }  
+      }
+
+    if (dealerTotal === playerTotal) {
       console.log('push')
     } 
-     else if (dealerTotal > playerTotal) {
-      console.log('Dealer wins', dealerHand)
+     else if (dealerTotal > playerTotal && dealerTotal < 22) {
+      console.log('Dealer wins', dealerTotal, playerTotal)
     } else {
-      console.log('player wins');
+      console.log('player wins', dealerTotal, playerTotal);
     }
 
     // player has opted to stay with 
@@ -148,14 +156,14 @@ function dealRandomCard() {
 function deal() {
     if (playerHand.length == 0) {
       playerHand.push(dealRandomCard());
+      dealerHand.push(dealRandomCard());
       playerHand.push(dealRandomCard());
       dealerHand.push(dealRandomCard());
-      dealerHand.push(dealRandomCard());
-    } else
-    if (dealerTotal == 21 && dealerTotal != 21) {
-        console.log('Dealer Wins');
-        deal();
-   }  else {
+    } 
+    // else if (dealerTotal === 21 && playerTotal != 21) {
+    //     console.log('Dealer BJ');
+    //     deal();
+     else {
         playerHand = [];
         dealerHand = [];
         deal();
