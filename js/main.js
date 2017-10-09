@@ -160,7 +160,6 @@ function downBet() {
   document.querySelector('.wage').innerHTML = "Wage Total: $" + wager;
   if (wager === 0 ) {
     document.querySelector('.downBet').setAttribute('disabled', 'disabled')
-
   }
 }
 
