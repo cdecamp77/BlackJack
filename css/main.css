@@ -11,9 +11,9 @@
     padding: 15px;
 } */
 
-.row-2 {
+/* .row-2 {
     height: 100px;
-}
+} */
 .col-1 {width: 8.33%;float: left;padding: 15px;}
 .col-2 {width: 16.66%;float: left;padding: 15px;}
 .col-3 {width: 25%;float: left;padding: 15px;}
@@ -73,6 +73,7 @@
 .upBet, .downBet {
     background: yellowgreen;
     font-size: 25px;
+    font-weight: bold;
 }
 
 .wage{
@@ -90,22 +91,27 @@
 .player {
     color: orangered;
     font-size: 25px;
-    background: rgba(0,0,0,.5);
+    font-weight: bold;
+    background: black;
     text-align: center;
+}
+
+.card {
+    
 }
  
 .dealerCards {
-    background-image: url("https://hearthstone.gamepedia.com/media/hearthstone.gamepedia.com/thumb/4/4c/Card_back-Pandaria.png/200px-Card_back-Pandaria.png?version=cf42a3965b66286f6e615b77cebc5359");
+    /* background-image: url("https://hearthstone.gamepedia.com/media/hearthstone.gamepedia.com/thumb/4/4c/Card_back-Pandaria.png/200px-Card_back-Pandaria.png?version=cf42a3965b66286f6e615b77cebc5359");
     background-size: 100%;    
     background-repeat: no-repeat; 
-    height: 100px;
+    height: 100px; */
 }
 
 .playerCards {
-    background: url("https://hearthstone.gamepedia.com/media/hearthstone.gamepedia.com/thumb/4/4c/Card_back-Pandaria.png/200px-Card_back-Pandaria.png?version=cf42a3965b66286f6e615b77cebc5359");
+    /* background: url("https://hearthstone.gamepedia.com/media/hearthstone.gamepedia.com/thumb/4/4c/Card_back-Pandaria.png/200px-Card_back-Pandaria.png?version=cf42a3965b66286f6e615b77cebc5359");
     background-size: 100%;   
     background-repeat: no-repeat; 
-    height: 100px;
+    height: 100px; */ 
 } 
 
 .pTotal {

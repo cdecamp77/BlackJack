@@ -1,8 +1,8 @@
 /*----- constants -----*/
 var playerHand = [];
 var dealerHand = [];
-var bank = "$" + 1000;
-var wager = "$" + 100;
+var bank;
+var wager = 0;
 var winner = null;
 var deck = new Deck();
 var dealerTotal = computeHand(dealerHand);
@@ -10,10 +10,11 @@ var playerTotal = computeHand(playerHand);
 
 
 /*----- app's state (variables) -----*/
-function Card(value, name, suit) {
+function Card(value, name, suit, img) {
   this.value = value;
   this.name = name;
   this.suit = suit;
+  this.img = img 
 }
 
 function Deck() {
@@ -23,15 +24,14 @@ function Deck() {
 Deck.prototype.createAllCards = function () {
   for (var s = 0; s < Deck.suits.length; s++) {
     for (var n = 0; n < Deck.names.length; n++) {
-      this.cards.push(new Card(Deck.values[n], Deck.names[n], Deck.suits[s]));
+      this.cards.push(new Card(Deck.values[n], Deck.names[n], Deck.suits[s], Deck.img));
     }
   }
 }
 
-Deck.names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+Deck.names = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 Deck.values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11];
-Deck.suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
-
+Deck.suits = ['h', 'd', 's', 'c'];
 ;
 
 
@@ -46,9 +46,6 @@ $(function () {
     if (dealerTotal === 21 && playerTotal != 21) {
       setMessage('21, dealer wins')
     }
-    // setMessage(computeHand(playerHand))
-    // setMessage(computeHand(dealerHand))
-    // Store Bet amount in a VAR
 });
 
   $('.hit').on('click', function () {
@@ -58,12 +55,10 @@ $(function () {
     messTotal();
     if (playerTotal > 21 && dealerTotal < 22) {
       setMessage('Bust, player loses');
+      // player loses bet
     } else if (playerTotal > 21) {
       setMessage('bust, player loses');
     }
-    // setMessage(computeHand(playerHand))
-    // setMessage(computeHand(dealerHand))
-    // Else you lose, subtract Bet from players Bank
   });
 
   $('.stay').on('click', function () {
@@ -88,6 +83,13 @@ $(function () {
     // player loses. Subt Bet from Bank
     // Player wins, add Bet to Bank
   });
+
+  $('.upBet').on('click', function (){
+    upBet();
+  });
+  $('.downBet').on('click', function (){
+    downBet();
+  });
 });
 
 /*----- functions -----*/
@@ -108,6 +110,7 @@ function deal() {
     dealerHand = [];
     deal();
   }
+
 messTotal();
 }
 
@@ -138,7 +141,7 @@ function messTotal() {
     var playerTotal = computeHand(playerHand);
     var dealerTotal = computeHand(dealerHand);
     document.querySelector('.pTotal').innerHTML = "Player total is " + playerTotal;
-    document.querySelector('.dTotal').innerHTML = "Dealer total is " + dealerTotal;
+    document.querySelector('.dTotal').innerHTML = "Dealer total is " + (dealerTotal - dealerHand[0].value);
 }
 
 //changes the main message
@@ -146,5 +149,19 @@ function setMessage(message) {
     document.querySelector('.message').innerHTML = message;
 }
 
+function upBet() {
+  wager = wager + 100;
+  document.querySelector('.wage').innerHTML = "Wage Total: $" + wager;
+  document.querySelector('.downBet').removeAttribute('disabled');
+}
+
+function downBet() {
+  wager = wager - 100;
+  document.querySelector('.wage').innerHTML = "Wage Total: $" + wager;
+  if (wager === 0 ) {
+    document.querySelector('.downBet').setAttribute('disabled', 'disabled')
+
+  }
+}
 
 deck.createAllCards();
