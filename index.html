@@ -50,7 +50,7 @@
   		src="https://code.jquery.com/jquery-3.2.1.min.js"
   		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
   		crossorigin="anonymous"></script>
-    <script src="js/main.js"></script>
+    <script defer src="js/main.js"></script>
     <title>BlackJack Grid</title>
 </head>
 <body>
@@ -66,18 +66,18 @@
         <div class="col-4 pTotal" ></div>
      </div> 
      <div class="row row-3"> 
-        <div class="col-4 bank">Bank Total:</div>
+        <div class="col-4 bankTotal">Bank Total: $1000</div>
         <input class=" col-2 player playerName" type = "text" placeholder = "Player Name">
         <button class="col-2 deal">Deal</button>
-        <button class="col-2 hit">Hit</button>
-        <button class="col-2 stay">Stay</button>
+        <button class="col-2 hit player-btn" disabled>Hit</button>
+        <button class="col-2 stay player-btn" disabled>Stay</button>
      </div> 
      <div class="row row-4"> 
         <div class="col-4 wage">Wage Total:</div>
         <button class="col-2 upBet">Increase Bet</button>
         <button class="col-2 downBet">Decrease Bet</button>
-        <button class="col-2 double" >Double</button>
-        <button class="col-2 split">Split</button>
+        <button class="col-2 double player-btn" disabled>Double</button>
+        <button class="col-2 split player-btn" disabled>Split</button>  
     </div>
     
 </body>

@@ -1,9 +1,10 @@
 /*----- constants -----*/
 var playerHand = [];
 var dealerHand = [];
-var bank;
+var bank = 1000;
 var wager = 0;
-var winner = null;
+var counter = 0;
+var winner = false;
 var deck = new Deck();
 var dealerTotal = computeHand(dealerHand);
 var playerTotal = computeHand(playerHand);
@@ -14,7 +15,7 @@ function Card(value, name, suit, img) {
   this.value = value;
   this.name = name;
   this.suit = suit;
-  this.img = img 
+  this.img = this.suit + this.name;
 }
 
 function Deck() {
@@ -38,50 +39,55 @@ Deck.suits = ['h', 'd', 's', 'c'];
 /*----- event listeners -----*/
 $(function () {
   $('.deal').on('click', function () {
-
     deal();
+    counter = counter + 1;
+      if (counter ===  5) {
+        deck.cards = [];
+        deck.createAllCards();
+        console.log('reshuffled');
+        counter = 0;
+    }
     var playerTotal = computeHand(playerHand);
     var dealerTotal = computeHand(dealerHand);
     messTotal();
-    if (dealerTotal === 21 && playerTotal != 21) {
-      setMessage('21, dealer wins')
-    }
+    document.querySelector('.dTotal').innerHTML = "Dealer showing " + (dealerTotal - dealerHand[0].value);
+
+    document.querySelector('.hit').removeAttribute('disabled');
+    document.querySelector('.stay ').removeAttribute('disabled');
+    
+
 });
 
   $('.hit').on('click', function () {
     playerHand.push(dealRandomCard());
-    var playerTotal = computeHand(playerHand);
     var dealerTotal = computeHand(dealerHand);
     messTotal();
-    if (playerTotal > 21 && dealerTotal < 22) {
-      setMessage('Bust, player loses');
-      // player loses bet
-    } else if (playerTotal > 21) {
-      setMessage('bust, player loses');
-    }
+    var playerTotal = computeHand(playerHand);
+    if (playerTotal >= 22 ) {
+    document.querySelector('.hit').setAttribute('disabled', '');      
+    document.querySelector('.stay').setAttribute('disabled', '');      
+      bank = bank - wager;
+      setMessage('You should have stayed...');
+    } 
+    computeHand(playerHand);
+    document.querySelector('.dTotal').innerHTML = "Dealer showing " + (dealerTotal - dealerHand[0].value);  
   });
 
   $('.stay').on('click', function () {
+    document.querySelector('.hit').setAttribute('disabled', '');
+    document.querySelector('.stay').setAttribute('disabled', '');
+    document.querySelector('.upBet').removeAttribute('disabled');
+    document.querySelector('.downBet').removeAttribute('disabled');
     playerTotal = computeHand(playerHand);
     dealerTotal = computeHand(dealerHand);
     messTotal();
+    checkWinner();
     while (dealerTotal <= 16) {
       dealerHand.push(dealRandomCard());
       dealerTotal = computeHand(dealerHand);
       messTotal();
-      if (dealerTotal > 21) {
-        setMessage('dealer busts');
-      }
-    }
-    if (dealerTotal === playerTotal) {
-      setMessage('push')
-    } else if (dealerTotal > playerTotal && dealerTotal < 22) {
-      setMessage('Dealer wins');
-    } else {
-      setMessage('player wins');
-    }
-    // player loses. Subt Bet from Bank
-    // Player wins, add Bet to Bank
+      checkWinner();
+  }
   });
 
   $('.upBet').on('click', function (){
@@ -100,11 +106,15 @@ function dealRandomCard() {
 }
 // deals the initial cards to the player and dealer
 function deal() {
+  setMessage('Player, what would you like to do?');
   if (playerHand.length == 0) {
     playerHand.push(dealRandomCard());
     dealerHand.push(dealRandomCard());
     playerHand.push(dealRandomCard());
     dealerHand.push(dealRandomCard());
+    document.querySelector('.upBet').setAttribute('disabled', '');
+    document.querySelector('.downBet').setAttribute('disabled', '');
+    
   } else {
     playerHand = [];
     dealerHand = [];
@@ -112,6 +122,7 @@ function deal() {
   }
 
 messTotal();
+checkBJ();
 }
 
 //computes hands for both players, taking acct for aces
@@ -130,9 +141,9 @@ function computeHand(hand) {
 
 // reshuffle deck at certain point, playing out current hand
 function reshuffle() {
-    if (Deck.length <= 15) {
+    if (deck.length <= 15) {
         // play current hands and reshuffle
-        deal();
+        deck.createAllCards();
     }
 }
 
@@ -141,26 +152,81 @@ function messTotal() {
     var playerTotal = computeHand(playerHand);
     var dealerTotal = computeHand(dealerHand);
     document.querySelector('.pTotal').innerHTML = "Player total is " + playerTotal;
-    document.querySelector('.dTotal').innerHTML = "Dealer total is " + (dealerTotal - dealerHand[0].value);
+    document.querySelector('.dTotal').innerHTML = "Dealer has " + dealerTotal;
 }
 
 //changes the main message
 function setMessage(message) {
     document.querySelector('.message').innerHTML = message;
 }
-
-function upBet() {
-  wager = wager + 100;
-  document.querySelector('.wage').innerHTML = "Wage Total: $" + wager;
-  document.querySelector('.downBet').removeAttribute('disabled');
+ // checks for winner
+function checkWinner(playerTotal, dealerTotal) {
+  var playerTotal = computeHand(playerHand);
+  var dealerTotal = computeHand(dealerHand);
+  if (dealerTotal < 22 && dealerTotal > playerTotal) {
+    bank = bank - wager;
+    document.querySelector('.bankTotal').innerHTML = "Bank Total: $" + bank;
+    setMessage('Dealer got you that time...');
+    disable();
+  } else if (dealerTotal < playerTotal && playerTotal < 22) {
+    messTotal();
+    bank = bank + wager;
+    setMessage("Winner!! Winner!!");
+    document.querySelector('.bankTotal').innerHTML = "Bank Total: $" + bank;
+    disable();
+  } else if (dealerTotal == playerTotal) {
+    setMessage('Let this one slide...');
+    messTotal();
+    disable();
+  } 
 }
 
-function downBet() {
-  wager = wager - 100;
+function checkBJ () {
+  var playerTotal = computeHand(playerHand);
+  var dealerTotal = computeHand(dealerHand);
+  if (dealerTotal == 21 && playerTotal != 21) {
+    bank = bank - wager;  
+    setMessage('Dealer got 21, not your day');
+    disable();      
+
+  } else if (playerTotal == 21) {
+    bank = bank + (wager * 1.5); 
+    disable();
+    setMessage('You got 21!!')     
+  }
+  }
+
+// increases wager amount
+function upBet() {
+  wager = wager + 50;
   document.querySelector('.wage').innerHTML = "Wage Total: $" + wager;
-  if (wager === 0 ) {
-    document.querySelector('.downBet').setAttribute('disabled', 'disabled')
+  document.querySelector('.downBet').removeAttribute('disabled');
+  if (wager >= bank) {
+    setMessage('Cannot bet more than bank amount');
+    document.querySelector('.upBet').setAttribute('disabled', '')
+  } 
+}
+
+// decreases wager amount
+function downBet() {
+  wager = wager - 50;
+  document.querySelector('.wage').innerHTML = "Wage Total: $" + wager;
+  if (wager <= 0 ) {
+    document.querySelector('.downBet').setAttribute('disabled', '')
+  } if (wager <= bank) {
+    document.querySelector('.upBet').removeAttribute('disabled', '');
   }
 }
 
+function disable() {
+  document.querySelector('.hit').setAttribute('disabled', '');      
+  document.querySelector('.stay').setAttribute('disabled', '');      
+  document.querySelector('.double').setAttribute('disabled', '');      
+  document.querySelector('.split').setAttribute('disabled', '');      
+
+  
+}
+
 deck.createAllCards();
+document.querySelector('.downBet').setAttribute('disabled', '');
+

@@ -33,7 +33,7 @@
     background-size: 100%; 
  }  
 
-.message {
+.message, h1 {
     font-size: 30px;
     text-align: center;
     color: red;
@@ -82,7 +82,7 @@
     background: rgba(0,0,0,.5);
 }
 
-.bank {
+.bankTotal {
     color: yellowgreen;
     font-size: 25px;
     background: rgba(0,0,0,.5);
